@@ -21,7 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         primaryStage.setOnShown(e -> {
-            State.launch(StateType.NORMAL);
+            State.setState(StateType.NORMAL);
             primaryStage.centerOnScreen();
         });
         primaryStage.initStyle(StageStyle.TRANSPARENT);

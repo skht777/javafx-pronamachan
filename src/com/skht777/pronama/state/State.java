@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author skht777
@@ -20,7 +21,6 @@ public class State {
 
     private static ImageView target;
     private static StateType current;
-    private StateType type;
     private Timeline time;
     private double width, height;
 
@@ -28,22 +28,20 @@ public class State {
         State.target = target;
     }
 
-    public static void launch(StateType type) {
-        if (!Optional.ofNullable(current).isPresent()) setState(type);
-    }
-
-    public static State getState() {
-        return current.getState();
-    }
-
-    private static void setState(StateType type) {
+    public static void setState(StateType type) {
+        if (type == current) return;
         Optional.ofNullable(current).map(StateType::getState).ifPresent(s -> s.time.stop());
         current = type;
         current.getState().setTarget();
     }
 
-    State(StateType type, int rate, Frame... frames) {
-        this.type = type;
+    public static void setState(StateType type, StateType... alt) {
+        if (type == current) setState(alt[0]);
+        else setState(IntStream.range(0, alt.length - 1).filter(i -> alt[i] == current)
+                .mapToObj(i -> alt[i + 1]).findFirst().orElse(type));
+    }
+
+    State(int rate, Frame... frames) {
         width = frames[0].getImage().getWidth();
         height = frames[0].getImage().getHeight();
         List<KeyFrame> keys = Arrays.stream(frames)
@@ -62,7 +60,7 @@ public class State {
     }
 
     private void nextFrame(Frame frame) {
-        target.setImage(frame.getImage());
+        if (target.getImage() != frame.getImage()) target.setImage(frame.getImage());
     }
 
 }
