@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author skht777
  */
-public class Frame {
+class Frame {
 
     private static Map<String, Image> image;
     private int time;
@@ -28,11 +28,11 @@ public class Frame {
         image.putIfAbsent(imageName, new Image(imageName));
     }
 
-    public Duration getDuration() {
+    Duration getDuration() {
         return Duration.millis(time);
     }
 
-    public Image getImage() {
+    Image getImage() {
         return image.get(imageName);
     }
 
